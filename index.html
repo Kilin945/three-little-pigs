@@ -17,7 +17,7 @@
   #pic.show { opacity:1; }
   #subtitle { font-size:clamp(16px,2.4vw,22px); line-height:1.8; max-width:44em;
               text-align:center; min-height:2.5em;
-              text-wrap:balance; word-break:keep-all; line-break:strict; }
+              text-wrap:balance; word-break:keep-all; line-break:strict; white-space:pre-line; }
   #meta { color:#9c8f80; font-size:13px; letter-spacing:2px; }
   /* 語言切換 */
   #langBtn { position:fixed; top:18px; right:18px; z-index:20;
@@ -70,8 +70,8 @@ const i18n = {
     texts: [
       "從前從前，豬媽媽家的三隻小豬長大了。他們背起小包袱，跟媽媽揮手道別，要到外面的世界，蓋一間自己的房子。",
       "三隻小豬選了不一樣的材料。豬大哥隨手捆了捆稻草，輕輕鬆鬆；豬二哥釘起木板，叮叮咚咚；豬小弟搬磚頭、抹水泥，做得滿頭大汗。",
-      "有一天，大野狼來了！他站在稻草屋前，深深吸一口氣——呼——！稻草滿天飛，房子不見了，豬大哥嚇得連滾帶爬地逃。",
-      "豬大哥逃進豬二哥的木屋。可是大野狼追了過來，砰！木板劈哩啪啦碎了一地，兩隻小豬抱在一起，拔腿就跑。",
+      "有一天，大野狼來了！他站在稻草屋前，深深吸一口氣——\n呼——！稻草滿天飛，房子不見了，豬大哥嚇得連滾帶爬地逃。",
+      "豬大哥逃進豬二哥的木屋。可是大野狼追了過來，\n砰！木板劈哩啪啦碎了一地，兩隻小豬抱在一起，拔腿就跑。",
       "兩個哥哥逃進豬小弟的磚屋。大野狼用力吹、用力撞，吹得臉都發紫，磚屋卻一動也不動。",
       "大野狼氣壞了，眼珠一轉，偷偷爬上屋頂：「嘿嘿，我就從煙囪鑽進去！」",
       "豬小弟早就想到了！他在壁爐上架起一大鍋熱水。撲通！大野狼從煙囪掉下來，正好掉進鍋裡——燙得他哇哇大叫，跳出來就跑！",
