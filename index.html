@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三隻小豬・有聲書 The Three Little Pigs</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#1e1b16; color:#efe7db;
+         font-family:"PingFang TC","Noto Sans TC",sans-serif;
+         height:100vh; overflow:hidden; user-select:none; cursor:pointer; }
+  #stage { height:100vh; display:flex; flex-direction:column;
+           align-items:center; justify-content:center; gap:18px; padding:24px; }
+  #pic { max-width:92vw; max-height:72vh; border-radius:14px;
+         box-shadow:0 8px 40px rgba(0,0,0,.5); object-fit:contain;
+         opacity:0; transition:opacity .35s ease; }
+  #pic.show { opacity:1; }
+  #subtitle { font-size:clamp(16px,2.4vw,22px); line-height:1.8; max-width:44em;
+              text-align:center; min-height:2.5em; }
+  #meta { color:#9c8f80; font-size:13px; letter-spacing:2px; }
+  /* 語言切換 */
+  #langBtn { position:fixed; top:18px; right:18px; z-index:20;
+             background:#3a342c; color:#efe7db; border:1px solid #5a5244;
+             border-radius:999px; padding:8px 18px; font-size:14px;
+             letter-spacing:2px; cursor:pointer; }
+  #langBtn:hover { background:#4a4436; }
+  /* 封面與結尾 */
+  .overlay { position:fixed; inset:0; background:#1e1b16; display:flex;
+             flex-direction:column; align-items:center; justify-content:center;
+             gap:24px; z-index:10; }
+  .overlay h1 { font-size:clamp(30px,5.5vw,52px); margin:0; letter-spacing:6px; text-align:center; }
+  .overlay h2 { font-size:clamp(16px,2.5vw,24px); margin:0; color:#c9bda9; letter-spacing:2px; }
+  .overlay p  { color:#9c8f80; font-size:16px; letter-spacing:3px;
+                animation:pulse 1.8s ease-in-out infinite; }
+  .overlay .pig { font-size:64px; }
+  @keyframes pulse { 0%,100%{opacity:.45} 50%{opacity:1} }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+
+<button id="langBtn">EN</button>
+
+<div id="cover" class="overlay">
+  <div class="pig">🐷🐷🐷</div>
+  <h1 id="coverTitle">三隻小豬</h1>
+  <h2 id="coverSub">The Three Little Pigs</h2>
+  <p id="coverHint">點一下，開始說故事</p>
+</div>
+
+<div id="fin" class="overlay hidden">
+  <div class="pig">🏠✨</div>
+  <h1 id="finTitle">故事說完了</h1>
+  <p id="finHint">點一下，再看一次</p>
+</div>
+
+<div id="stage">
+  <img id="pic" alt="">
+  <div id="subtitle"></div>
+  <div id="meta"></div>
+</div>
+
+<script>
+const i18n = {
+  zh: {
+    coverTitle:"三隻小豬", coverSub:"The Three Little Pigs",
+    coverHint:"點一下，開始說故事", finTitle:"故事說完了", finHint:"點一下，再看一次",
+    meta:(i,n)=>`第 ${i} 頁 / 共 ${n} 頁　·　點一下翻頁`, btn:"EN",
+    texts: [
+      "從前從前，豬媽媽家的三隻小豬長大了。他們背起小包袱，跟媽媽揮手道別，要到外面的世界，蓋一間自己的房子。",
+      "三隻小豬選了不一樣的材料。豬大哥隨手捆了捆稻草，輕輕鬆鬆；豬二哥釘起木板，叮叮咚咚；豬小弟搬磚頭、抹水泥，做得滿頭大汗。",
+      "有一天，大野狼來了！他站在稻草屋前，深深吸一口氣——呼——！稻草滿天飛，房子不見了，豬大哥嚇得連滾帶爬地逃。",
+      "豬大哥逃進豬二哥的木屋。可是大野狼追了過來，砰！木板劈哩啪啦碎了一地，兩隻小豬抱在一起，拔腿就跑。",
+      "兩個哥哥逃進豬小弟的磚屋。大野狼用力吹、用力撞，吹得臉都發紫，磚屋卻一動也不動。",
+      "大野狼氣壞了，眼珠一轉，偷偷爬上屋頂：「嘿嘿，我就從煙囪鑽進去！」",
+      "豬小弟早就想到了！他在壁爐上架起一大鍋熱水。撲通！大野狼從煙囪掉下來，正好掉進鍋裡——燙得他哇哇大叫，跳出來就跑！",
+      "大野狼夾著尾巴逃走，再也不敢回來了。後來，大哥二哥跟著小弟，一起蓋了漂亮又堅固的磚屋，快快樂樂地住在一起。",
+    ],
+    audio: n => `pages/page-${n}/narration.mp3`,
+  },
+  en: {
+    coverTitle:"The Three Little Pigs", coverSub:"三隻小豬",
+    coverHint:"Tap to start the story", finTitle:"The End", finHint:"Tap to read it again",
+    meta:(i,n)=>`Page ${i} / ${n}　·　Tap to turn the page`, btn:"中文",
+    texts: [
+      "Once upon a time, Mother Pig's three little pigs had grown up. They packed up their little bundles, waved goodbye to their mom, and set off into the wide world to build houses of their own.",
+      "The three little pigs chose different materials. Big Brother casually bundled up some straw — easy and breezy. Second Brother nailed up wooden planks — bang, bang, bang! And Little Brother carried bricks and spread mortar, working up a big sweat.",
+      "One day, the Big Bad Wolf came! He stood in front of the straw house and took a deep breath — WHOOSH! Straw flew everywhere, the house was gone, and Big Brother scrambled away head over heels.",
+      "Big Brother fled into Second Brother's wooden house. But the Big Bad Wolf came chasing after him. BANG! The planks shattered all over the ground. The two little pigs hugged each other tight, then ran for their lives.",
+      "The two big brothers fled into Little Brother's brick house. The Big Bad Wolf blew and blew, rammed and rammed, until his face turned purple — but the brick house wouldn't budge an inch.",
+      "The Big Bad Wolf was furious. His eyes rolled with a sly idea, and he sneaked up onto the roof. \"Heh heh, I'll just slip in through the chimney!\"",
+      "But Little Brother had thought of it long ago! He had set a big pot of hot water on the fireplace. SPLASH! The wolf fell down the chimney, right into the pot — scalded, he howled, leapt out, and ran!",
+      "The Big Bad Wolf ran away with his tail between his legs, and never dared to come back. Later, the two big brothers followed Little Brother, built beautiful and sturdy brick houses together, and they all lived happily ever after.",
+    ],
+    audio: n => `pages/page-${n}/narration-en.mp3`,
+  },
+};
+const PAGE_N = ["01","02","03","04","05","06","07","08"];
+PAGE_N.forEach(n => { new Image().src = `pages/page-${n}/page.png`; });
+
+let lang = 'zh';
+let idx = -1;               // -1 封面, -2 結尾
+let audio = null;
+
+const $ = id => document.getElementById(id);
+
+function applyLangTexts() {
+  const t = i18n[lang];
+  $('coverTitle').textContent = t.coverTitle;
+  $('coverSub').textContent = t.coverSub;
+  $('coverHint').textContent = t.coverHint;
+  $('finTitle').textContent = t.finTitle;
+  $('finHint').textContent = t.finHint;
+  $('langBtn').textContent = t.btn;
+}
+
+function stopAudio() {
+  if (audio) { audio.pause(); audio.currentTime = 0; audio = null; }
+}
+
+function showPage(i) {
+  const t = i18n[lang];
+  const pic = $('pic');
+  pic.classList.remove('show');
+  setTimeout(() => {
+    pic.src = `pages/page-${PAGE_N[i]}/page.png`;
+    pic.onload = () => pic.classList.add('show');
+  }, 120);
+  $('subtitle').textContent = t.texts[i];
+  $('meta').textContent = t.meta(i+1, PAGE_N.length);
+  stopAudio();
+  audio = new Audio(t.audio(PAGE_N[i]));
+  audio.play().catch(()=>{});
+}
+
+function next() {
+  if (idx === -1) $('cover').classList.add('hidden');
+  idx++;
+  if (idx >= PAGE_N.length) {
+    stopAudio();
+    $('fin').classList.remove('hidden');
+    idx = -2;
+    return;
+  }
+  showPage(idx);
+}
+
+function prev() { if (idx > 0) { idx--; showPage(idx); } }
+
+document.body.addEventListener('click', () => {
+  if (idx === -2) { $('fin').classList.add('hidden'); idx = -1; }
+  next();
+});
+
+$('langBtn').addEventListener('click', (e) => {
+  e.stopPropagation();                    // 切語言不翻頁
+  lang = (lang === 'zh') ? 'en' : 'zh';
+  applyLangTexts();
+  if (idx >= 0) showPage(idx);            // 目前頁面用新語言重播
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault();
+    if (idx === -2) { $('fin').classList.add('hidden'); idx = -1; }
+    next();
+  }
+  if (e.key === 'ArrowLeft') prev();
+});
+
+applyLangTexts();
+</script>
+</body>
+</html>
